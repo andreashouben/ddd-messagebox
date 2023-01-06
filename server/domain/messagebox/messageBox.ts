@@ -1,21 +1,17 @@
 import {Customer} from "../customer/customer";
 import {IncomingMessage} from "./messageBoxService";
-import {Conversation} from "./conversation";
+import {Conversation} from "./conversation/conversation";
+import {Conversations} from "./conversation/conversations";
 
-
-export interface StoredMessage {
-    from: string,
-    createDate: Date,
-    text: string
-}
 
 export class MessageBox {
     private customer: Customer;
 
-    private conversations: Conversation[] = [];
+    private conversations: Conversations;
 
     constructor(customer: Customer) {
         this.customer = customer;
+        this.conversations = new Conversations();
     }
 
     getUserEmail() {
@@ -24,7 +20,7 @@ export class MessageBox {
 
     createNewConversationFromIncomingMessage(incomingMessage: IncomingMessage, createDate: Date) {
         const conversation = new Conversation(incomingMessage, createDate);
-        this.conversations.push(conversation);
+        this.conversations.add(conversation);
     }
 
     getConversations() {

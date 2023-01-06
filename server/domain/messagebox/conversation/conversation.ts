@@ -1,8 +1,13 @@
-import {IncomingMessage} from "./messageBoxService";
-import {StoredMessage} from "./messageBox";
+import {IncomingMessage} from "../messageBoxService";
+
+export interface StoredMessage {
+    from: string,
+    createDate: Date,
+    text: string
+}
 
 export class Conversation {
-    messages: StoredMessage[] = []
+    private messages: StoredMessage[] = []
     topic: string;
 
 
@@ -17,5 +22,9 @@ export class Conversation {
 
     public getTopic() {
         return this.topic;
+    }
+
+    public getMessages(){
+        return Object.seal([...this.messages])
     }
 }

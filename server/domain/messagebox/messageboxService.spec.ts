@@ -1,9 +1,10 @@
 import {IncomingMessage, MessageBoxService} from "./messageBoxService";
 import {MessageBoxRepository} from "./messageBoxRepository";
 import {Customer} from "../customer/customer";
-import {MessageBox, StoredMessage} from "./messageBox";
+import {MessageBox} from "./messageBox";
 import {TimeService} from "./timeService";
-import {Conversation} from "./conversation";
+import {StoredMessage} from "./conversation/conversation";
+import {Conversations} from "./conversation/conversations";
 
 
 class MessageBoxRepo implements MessageBoxRepository {
@@ -72,9 +73,9 @@ describe('messageboxService', () => {
         })
 
         it('initially has no conversations', () => {
-            const conversations: Conversation[] = messageBoxService.getConversationsOfUser(userMailAddress);
+            const conversations: Conversations = messageBoxService.getConversationsOfUser(userMailAddress);
 
-            expect(conversations).toHaveLength(0);
+            expect(conversations.count()).toEqual(0)
         })
 
         it('starts a conversation when the user sends a message', () => {
@@ -85,10 +86,10 @@ describe('messageboxService', () => {
 
             const conversationsOfUser = messageBoxService.getConversationsOfUser(userMailAddress);
 
-            expect(conversationsOfUser).toHaveLength(1)
-            const conversation = conversationsOfUser[0];
+            expect(conversationsOfUser.count()).toEqual(1)
+            const conversation = conversationsOfUser.getLatestConversation();
             expect(conversation.getTopic()).toEqual(incomingMessage.topic)
-            const storedMessages = conversationsOfUser[0].messages;
+            const storedMessages = conversation.getMessages();
             expect(storedMessages).toHaveLength(1);
             const actualMessage = storedMessages[0]
 
@@ -99,5 +100,14 @@ describe('messageboxService', () => {
             }
             expect(actualMessage).toEqual(expectedMessage)
         })
+/*
+        it('lets a customer service agent answer on a user written message', () => {
+            const now = timeService.fixTime();
+
+            messageBoxService.startConversation(incomingMessage);
+            const conversationsOfUser = messageBoxService.getConversationsOfUser(userMailAddress);
+
+
+        })*/
     })
 })
