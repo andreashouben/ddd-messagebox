@@ -1,13 +1,16 @@
 import {MessageBoxRepository} from "./messageBoxRepository";
 import {Customer} from "../customer/customer";
 import {MessageBox} from "./messageBox";
+import {IncomingMessage} from "./messageboxService.spec";
+import {TimeService} from "./timeService";
 
 export class MessageBoxService {
     private messageBoxRepo: MessageBoxRepository;
+    private timeService: TimeService;
 
-    constructor(messageBoxRepo: MessageBoxRepository) {
+    constructor(messageBoxRepo: MessageBoxRepository, timeService: TimeService) {
         this.messageBoxRepo = messageBoxRepo;
-
+        this.timeService = timeService;
     }
 
     createMessageBoxForCustomer(customer: Customer) {
@@ -15,7 +18,15 @@ export class MessageBoxService {
         this.messageBoxRepo.persist(messageBox);
     }
 
-    getMessageBoxForCustomer(customer: Customer) {
-        return this.messageBoxRepo.findMessageBoxByCustomerMailAddress(customer.getMailAddress());
+
+    getConversationsOfUser(userMailAddress: string) {
+        const messageBox = this.messageBoxRepo.findMessageBoxByCustomerMailAddress(userMailAddress);
+        return messageBox.getConversations();
+    }
+
+    startConversation(message: IncomingMessage) {
+        const messageBox = this.messageBoxRepo.findMessageBoxByCustomerMailAddress(message.from);
+        messageBox.createNewConversationByCustomerWithText(message.text, this.timeService.now());
+        this.messageBoxRepo.persist(messageBox);
     }
 }
