@@ -5,7 +5,8 @@ import {TimeService} from "./timeService";
 
 export interface IncomingMessage {
     from: string,
-    text: string
+    text: string,
+    topic:string;
 }
 
 export class MessageBoxService {
@@ -30,7 +31,8 @@ export class MessageBoxService {
 
     startConversation(message: IncomingMessage) {
         const messageBox = this.messageBoxRepo.findMessageBoxByCustomerMailAddress(message.from);
-        messageBox.createNewConversationByCustomerWithText(message.text, this.timeService.now());
+
+        messageBox.createNewConversationByCustomerWithText(message, this.timeService.now());
         this.messageBoxRepo.persist(messageBox);
     }
 }

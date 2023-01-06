@@ -72,7 +72,7 @@ describe('messageboxService', () => {
         it('starts a conversation when the user sends a message', () => {
             const text = 'Hi, I have a question regarding my contract';
             const message: IncomingMessage = {
-                from: userMailAddress, text
+                from: userMailAddress, text, topic: 'Question regarding contract'
             }
 
             const now = new Date();
@@ -83,17 +83,18 @@ describe('messageboxService', () => {
             const conversationsOfUser = messageBoxService.getConversationsOfUser(userMailAddress);
 
             expect(conversationsOfUser).toHaveLength(1)
+            const conversation = conversationsOfUser[0];
+            expect(conversation.getTopic()).toEqual(message.topic)
             const storedMessages = conversationsOfUser[0].messages;
             expect(storedMessages).toHaveLength(1);
             const actualMessage = storedMessages[0]
 
             const expectedMessage: StoredMessage = {
-                from: "Customer",
+                from: userMailAddress,
                 text,
                 createDate: now
             }
             expect(actualMessage).toEqual(expectedMessage)
-
         })
     })
 })
