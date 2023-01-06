@@ -31,8 +31,7 @@ export class MessageBoxService {
 
     startConversation(message: IncomingMessage) {
         const messageBox = this.messageBoxRepo.findMessageBoxByCustomerMailAddress(message.from);
-
-        messageBox.createNewConversationByCustomerWithText(message, this.timeService.now());
+        messageBox.createNewConversationFromIncomingMessage(message, this.timeService.now());
         this.messageBoxRepo.persist(messageBox);
     }
 }
