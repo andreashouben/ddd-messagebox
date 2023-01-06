@@ -1,8 +1,12 @@
 import {MessageBoxRepository} from "./messageBoxRepository";
 import {Customer} from "../customer/customer";
 import {MessageBox} from "./messageBox";
-import {IncomingMessage} from "./messageboxService.spec";
 import {TimeService} from "./timeService";
+
+export interface IncomingMessage {
+    from: string,
+    text: string
+}
 
 export class MessageBoxService {
     private messageBoxRepo: MessageBoxRepository;

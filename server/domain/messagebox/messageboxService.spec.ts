@@ -1,4 +1,4 @@
-import {MessageBoxService} from "./messageBoxService";
+import {IncomingMessage, MessageBoxService} from "./messageBoxService";
 import {MessageBoxRepository} from "./messageBoxRepository";
 import {Customer} from "../customer/customer";
 import {MessageBox, StoredMessage} from "./messageBox";
@@ -9,7 +9,12 @@ class MessageBoxRepo implements MessageBoxRepository {
     private readonly repo: MessageBox[] = []
 
     persist(messageBox: MessageBox): void {
-        this.repo.push(messageBox);
+        const index = this.repo.findIndex(mb => mb.getUserEmail() === messageBox.getUserEmail());
+        if (index === -1){
+            this.repo.push(messageBox);
+        }else {
+            this.repo[index] = messageBox;
+        }
     }
 
     findMessageBoxByCustomerMailAddress(mailAddress: string): MessageBox {
@@ -17,7 +22,7 @@ class MessageBoxRepo implements MessageBoxRepository {
         if (messageBox === undefined) {
             throw Error(`Messagebox not found for user ${mailAddress}`)
         }
-        return messageBox;
+        return Object.create(messageBox)
     }
 
 }
@@ -38,11 +43,6 @@ class TestTimeService implements TimeService {
 }
 
 class Conversation {
-}
-
-export interface IncomingMessage {
-    from: string,
-    text: string
 }
 
 let messageBoxService: MessageBoxService;
